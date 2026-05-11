@@ -207,57 +207,70 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 520px;
+    height: 600px;
   }
 
   /* Background phone (behind, slightly rotated) */
   .phone-bg {
     position: absolute;
-    right: 20px;
-    top: 20px;
-    width: 200px;
-    height: 400px;
-    border-radius: 28px;
+    right: 10px;
+    top: 40px;
+    width: 220px;
+    height: 440px;
+    border-radius: 32px;
     overflow: hidden;
-    border: 2px solid rgba(168,85,247,0.2);
-    background: var(--bg3);
+    border: 2px solid rgba(168,85,247,0.18);
+    background: #f0eef8;
     box-shadow: 0 24px 60px rgba(0,0,0,0.5);
-    transform: rotate(4deg) translateX(40px);
+    transform: rotate(5deg) translateX(60px);
     z-index: 1;
-    opacity: 0.7;
+    opacity: 0.65;
   }
-  .phone-bg img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .phone-bg img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    object-position: top;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
 
   /* Main front phone */
   .phone-front {
     position: relative;
-    width: 240px;
-    height: 480px;
-    border-radius: 32px;
+    width: 280px;
+    height: 560px;
+    border-radius: 36px;
     overflow: hidden;
-    border: 2px solid rgba(168,85,247,0.4);
-    background: var(--bg3);
+    border: 2px solid rgba(168,85,247,0.45);
+    background: #f0eef8;
     box-shadow:
-      0 0 0 1px rgba(168,85,247,0.1),
-      0 32px 80px rgba(0,0,0,0.6),
-      0 0 60px rgba(124,58,237,0.2);
+      0 0 0 1px rgba(168,85,247,0.12),
+      0 40px 100px rgba(0,0,0,0.65),
+      0 0 70px rgba(124,58,237,0.22);
     z-index: 3;
     cursor: pointer;
   }
 
   .phone-slide {
     position: absolute; inset: 0; opacity: 0;
-    transition: opacity 0.6s ease;
+    transition: opacity 0.5s ease;
   }
   .phone-slide.active { opacity: 1; }
-  .phone-slide img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .phone-slide img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    object-position: top;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
 
   .phone-placeholder {
     width: 100%; height: 100%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 12px; color: var(--muted); font-size: 0.8125rem; padding: 20px; text-align: center;
+    gap: 12px; color: #888; font-size: 0.8125rem; padding: 20px; text-align: center;
+    background: #f0eef8;
   }
-  .phone-placeholder svg { opacity: 0.25; }
+  .phone-placeholder svg { opacity: 0.25; stroke: #555; }
 
   /* Nav arrows */
   .phone-nav {
@@ -384,36 +397,34 @@
   }
   .empty-icon { font-size: 1.5rem; opacity: 0.4; }
 
-  /* ── VISUAL MASONRY ── */
-  .visual-scroll-wrap {
-    overflow-x: auto; cursor: grab; padding-bottom: 16px;
-    scrollbar-width: thin; scrollbar-color: rgba(168,85,247,0.3) transparent;
-  }
-  .visual-scroll-wrap::-webkit-scrollbar { height: 3px; }
-  .visual-scroll-wrap::-webkit-scrollbar-track { background: transparent; }
-  .visual-scroll-wrap::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.4); border-radius: 4px; }
+  /* ── VISUAL CARD GRID ── */
+  .visual-scroll-wrap { /* keep for compatibility */ }
 
   .visual-masonry {
-    display: grid; grid-auto-flow: column;
-    grid-template-rows: 220px 220px; grid-auto-columns: 260px;
-    gap: 14px; width: max-content; padding: 4px 2px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
   }
 
   .visual-item {
-    border-radius: var(--radius); overflow: hidden;
-    background: var(--bg2); border: 1px solid var(--border);
-    position: relative; cursor: pointer;
+    width: 100%;
+    height: 220px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    position: relative;
+    cursor: pointer;
     transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    flex-shrink: 0;
   }
-  .visual-item:nth-child(odd) { grid-row: span 2; }
-  .visual-item:nth-child(even) { grid-row: span 1; }
-  .visual-item:hover { transform: scale(1.02); border-color: rgba(168,85,247,0.5); box-shadow: 0 0 24px var(--glow); }
+  .visual-item:hover { transform: translateY(-4px); border-color: rgba(168,85,247,0.5); box-shadow: 0 16px 40px rgba(124,58,237,0.15); }
 
-  .visual-item img { width: 100%; height: 100%; object-fit: cover; }
+  .visual-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .visual-item-empty { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.75rem; }
   .visual-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(7,6,15,0.8) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(7,6,15,0.85) 0%, transparent 55%);
     opacity: 0; transition: opacity 0.25s;
     display: flex; align-items: flex-end; padding: 16px;
   }
@@ -1133,7 +1144,7 @@
 
 <script>
 // ── STATE ──────────────────────────────────────────
-const state = {
+const DEFAULT_STATE = {
   hero: {
     name: 'Karthikeyan\nSridhar',
     eyebrow: 'AI Builder / Designer',
@@ -1154,7 +1165,70 @@ const state = {
   lightboxIndex: 0
 };
 
-// ── ADMIN ──────────────────────────────────────────
+// Load persisted state or use defaults
+function loadState() {
+  try {
+    const saved = localStorage.getItem('ks_portfolio_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return { ...DEFAULT_STATE, ...parsed,
+        hero: { ...DEFAULT_STATE.hero, ...(parsed.hero || {}) },
+        workTags: [], currentCarousel: 0, lightboxImages: [], lightboxIndex: 0
+      };
+    }
+  } catch(e) { /* ignore */ }
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+
+const state = loadState();
+
+function saveState() {
+  try {
+    const toSave = {
+      hero: state.hero,
+      companies: state.companies,
+      works: state.works,
+      visuals: state.visuals,
+      blogs: state.blogs,
+      testimonials: state.testimonials
+    };
+    localStorage.setItem('ks_portfolio_state', JSON.stringify(toSave));
+  } catch(e) { /* quota exceeded — skip */ }
+}
+
+// ── FILE → BASE64 HELPER ────────────────────────────
+function readFileAsDataURL(file) {
+  return new Promise(resolve => {
+    const r = new FileReader();
+    r.onload = e => resolve(e.target.result);
+    r.readAsDataURL(file);
+  });
+}
+
+// ── BOOT: render all persisted data on page load ─────
+window.addEventListener('DOMContentLoaded', () => {
+  renderHero();
+  renderCarousel();
+  renderCompanies();
+  renderWorks();
+  renderVisuals();
+  renderBlogs();
+  renderTestimonials();
+});
+// ── HERO RENDER ──────────────────────────────────────────
+function renderHero() {
+  if (state.hero.name) document.getElementById('heroName').innerHTML = state.hero.name.replace('\n','<br>');
+  if (state.hero.eyebrow) document.getElementById('heroEyebrow').textContent = state.hero.eyebrow;
+  if (state.hero.tagline) document.getElementById('heroTagline').innerHTML = state.hero.tagline;
+  if (state.hero.bio) document.getElementById('heroBio').textContent = state.hero.bio;
+  const resumeUrl = state.hero.resumeUrl || '#';
+  const linkedinUrl = state.hero.linkedinUrl || '#';
+  document.getElementById('heroResumeBtn').href = resumeUrl;
+  document.getElementById('heroLinkedinBtn').href = linkedinUrl;
+  document.getElementById('heroResumeUrl').href = resumeUrl;
+  if (document.getElementById('mobileResume')) document.getElementById('mobileResume').href = resumeUrl;
+}
+
 document.addEventListener('keydown', e => {
   if (e.ctrlKey && e.key.toLowerCase() === 'a') {
     e.preventDefault();
@@ -1184,50 +1258,30 @@ document.querySelectorAll('.admin-tab').forEach(btn => {
 // ── HERO ──────────────────────────────────────────
 function saveHero() {
   const name = document.getElementById('aHeroName').value || state.hero.name;
-  const eyebrow = document.getElementById('aHeroEyebrow') ? '' : document.getElementById('aHeroTagline').value;
+  const eyebrow = document.getElementById('aHeroTagline').value;
   const subtitle = document.getElementById('aHeroSubtitle').value;
   const bio = document.getElementById('aHeroBio').value;
   const resume = document.getElementById('aHeroResume').value;
   const linkedin = document.getElementById('aHeroLinkedin').value;
-  
-  if (name) {
-    state.hero.name = name;
-    document.getElementById('heroName').innerHTML = name.replace('\n','<br>');
-  }
-  if (document.getElementById('aHeroTagline').value) {
-    state.hero.eyebrow = document.getElementById('aHeroTagline').value;
-    document.getElementById('heroEyebrow').textContent = state.hero.eyebrow;
-  }
-  if (subtitle) {
-    state.hero.tagline = subtitle;
-    document.getElementById('heroTagline').textContent = subtitle;
-  }
-  if (bio) {
-    state.hero.bio = bio;
-    document.getElementById('heroBio').textContent = bio;
-  }
-  if (resume) {
-    state.hero.resumeUrl = resume;
-    document.getElementById('heroResumeBtn').href = resume;
-    document.getElementById('heroResumeUrl').href = resume;
-  }
-  if (linkedin) {
-    state.hero.linkedinUrl = linkedin;
-    document.getElementById('heroLinkedinBtn').href = linkedin;
-  }
+
+  if (name) { state.hero.name = name; document.getElementById('heroName').innerHTML = name.replace('\n','<br>'); }
+  if (eyebrow) { state.hero.eyebrow = eyebrow; document.getElementById('heroEyebrow').textContent = eyebrow; }
+  if (subtitle) { state.hero.tagline = subtitle; document.getElementById('heroTagline').textContent = subtitle; }
+  if (bio) { state.hero.bio = bio; document.getElementById('heroBio').textContent = bio; }
+  if (resume) { state.hero.resumeUrl = resume; document.getElementById('heroResumeBtn').href = resume; document.getElementById('heroResumeUrl').href = resume; }
+  if (linkedin) { state.hero.linkedinUrl = linkedin; document.getElementById('heroLinkedinBtn').href = linkedin; }
+  saveState();
   notify('Hero saved ✓');
 }
 
-// Carousel upload from Admin
+// Carousel upload from Admin — store as base64 for persistence
 function handleCarouselUpload(e) {
   const files = Array.from(e.target.files);
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      state.hero.carousel.push(ev.target.result);
-      renderCarousel();
-    };
-    reader.readAsDataURL(file);
+  const promises = files.map(f => readFileAsDataURL(f));
+  Promise.all(promises).then(results => {
+    results.forEach(r => state.hero.carousel.push(r));
+    saveState();
+    renderCarousel();
   });
 }
 const PHONE_IMAGES = [
