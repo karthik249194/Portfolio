@@ -298,23 +298,6 @@
   .carousel-dot.active { background: var(--accent); transform: scale(1.3); }
 
   /* Companies row */
-  .companies-row {
-    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
-    padding: 0 var(--px);
-    margin-bottom: var(--section-gap);
-  }
-  .company-tag {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 7px 14px;
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    font-size: 0.8rem;
-    color: var(--muted);
-    background: rgba(255,255,255,0.03);
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
-  }
-  .company-tag:hover { border-color: rgba(168,85,247,0.4); color: var(--text2); background: rgba(168,85,247,0.06); }
-  .company-tag img { width: 18px; height: 18px; object-fit: contain; border-radius: 3px; }
 
   /* ── SECTION HEADERS ── */
   .section-header {
@@ -926,10 +909,7 @@
   </div>
 </section>
 
-<!-- COMPANIES -->
-<div class="companies-row" id="companiesRow">
-  <!-- populated by JS -->
-</div>
+
 
 <!-- WORKS -->
 <section id="works">
@@ -1036,7 +1016,6 @@
     </div>
     <div class="admin-tabs">
       <button class="admin-tab active" data-tab="hero">Hero</button>
-      <button class="admin-tab" data-tab="companies">Companies</button>
       <button class="admin-tab" data-tab="works">Works</button>
       <button class="admin-tab" data-tab="visual">Visual</button>
       <button class="admin-tab" data-tab="blog">Blog</button>
@@ -1087,29 +1066,6 @@
         </div>
       </div>
 
-      <!-- COMPANIES TAB -->
-      <div class="admin-section" id="tab-companies">
-        <div class="admin-form">
-          <div class="form-group">
-            <label class="form-label">Company Name</label>
-            <input class="form-input" id="aCompanyName" placeholder="PayPal">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Logo (optional)</label>
-            <label class="upload-zone">
-              <input type="file" id="aCompanyLogo" accept="image/*" onchange="previewUpload(this,'companyLogoPreview')">
-              <img id="companyLogoPreview" class="upload-preview" alt="">
-              <span class="upload-icon">↑</span>
-              <span class="upload-text">Upload logo image</span>
-              <span class="upload-hint">SVG, PNG up to 2MB</span>
-            </label>
-          </div>
-          <button class="btn-add" onclick="addCompany()">Add Company</button>
-          <div class="admin-divider"></div>
-          <div class="admin-list-title">Added Companies</div>
-          <div class="admin-list" id="adminCompaniesList"></div>
-        </div>
-      </div>
 
       <!-- WORKS TAB -->
       <div class="admin-section" id="tab-works">
@@ -1312,7 +1268,6 @@ const DEFAULT_STATE = {
     linkedinUrl: '#',
     carousel: []
   },
-  companies: [],
   works: [],
   visuals: [],
   blogs: [],
@@ -1344,7 +1299,6 @@ function saveState() {
   try {
     const toSave = {
       hero: state.hero,
-      companies: state.companies,
       works: state.works,
       visuals: state.visuals,
       blogs: state.blogs,
@@ -1358,7 +1312,6 @@ function saveState() {
 function exportData() {
   const toSave = {
     hero: state.hero,
-    companies: state.companies,
     works: state.works,
     visuals: state.visuals,
     blogs: state.blogs,
@@ -1384,7 +1337,6 @@ function importData(e) {
       const parsed = JSON.parse(ev.target.result);
       // Merge into state
       if (parsed.hero)         Object.assign(state.hero, parsed.hero);
-      if (parsed.companies)    state.companies = parsed.companies;
       if (parsed.works)        state.works = parsed.works;
       if (parsed.visuals)      state.visuals = parsed.visuals;
       if (parsed.blogs)        state.blogs = parsed.blogs;
@@ -1393,13 +1345,12 @@ function importData(e) {
       // Re-render everything
       renderHero();
       renderCarousel();
-      renderCompanies();
-      renderWorks();
+          renderWorks();
       renderVisuals();
       renderBlogs();
       renderTestimonials();
       // Refresh all admin lists
-      ['companies','works','visual','blog','testimonials'].forEach(renderAdminList);
+      ['works','visual','blog','testimonials'].forEach(renderAdminList);
       notify('Data restored ✓');
     } catch(err) {
       notify('Invalid backup file ✗');
@@ -1428,7 +1379,6 @@ function readFileAsDataURL(file) {
 window.addEventListener('DOMContentLoaded', () => {
   renderHero();
   renderCarousel();
-  renderCompanies();
   renderWorks();
   renderVisuals();
   renderBlogs();
@@ -1584,37 +1534,7 @@ setInterval(() => {
   if (state.hero.carousel.length > 1) phoneNext();
 }, 3500);
 
-// ── COMPANIES ──────────────────────────────────────────
-function addCompany() {
-  const name = document.getElementById('aCompanyName').value.trim();
-  if (!name) return;
-  const logoInput = document.getElementById('aCompanyLogo');
-  if (logoInput.files[0]) {
-    readFileAsDataURL(logoInput.files[0]).then(logo => {
-      state.companies.push({ name, logo });
-      saveState(); renderCompanies(); renderAdminList('companies');
-      document.getElementById('aCompanyName').value = '';
-      document.getElementById('companyLogoPreview').style.display = 'none';
-      notify('Company added ✓');
-    });
-  } else {
-    state.companies.push({ name, logo: null });
-    saveState(); renderCompanies(); renderAdminList('companies');
-    document.getElementById('aCompanyName').value = '';
-    notify('Company added ✓');
-  }
-}
 
-function renderCompanies() {
-  const row = document.getElementById('companiesRow');
-  if (!state.companies.length) { row.innerHTML = ''; return; }
-  row.innerHTML = state.companies.map(c => `
-    <div class="company-tag">
-      ${c.logo ? `<img src="${c.logo}" alt="${c.name}">` : ''}
-      ${c.name}
-    </div>
-  `).join('');
-}
 
 // ── WORKS ──────────────────────────────────────────
 function addWork() {
@@ -1886,7 +1806,6 @@ function renderTestimonials() {
 // ── ADMIN LISTS ──────────────────────────────────────────
 function renderAdminList(type) {
   const maps = {
-    companies:    { listId: 'adminCompaniesList',  items: state.companies,    label: c => c.name,  sub: () => '',       thumb: c => c.logo },
     works:        { listId: 'adminWorksList',       items: state.works,        label: w => w.title, sub: w => w.cat,     thumb: w => w.thumb },
     visual:       { listId: 'adminVisualList',      items: state.visuals,      label: v => v.title, sub: () => 'Visual', thumb: v => v.src },
     blog:         { listId: 'adminBlogList',        items: state.blogs,        label: b => b.title, sub: b => b.cat,     thumb: b => b.cover },
@@ -1944,13 +1863,6 @@ function buildEditDrawer(type, item, i) {
         <input class="form-input" id="edit-${type}-${i}-url" value="${escHtml(item.url||'')}"></div>
       <div class="form-group"><label class="form-label">Thumbnail (leave blank to keep current)</label>
         <input type="file" accept="image/*" id="edit-${type}-${i}-thumb" style="font-size:0.78rem;color:var(--muted)"></div>`;
-  }
-  if (type === 'companies') {
-    return `
-      <div class="form-group"><label class="form-label">Name</label>
-        <input class="form-input" id="edit-${type}-${i}-name" value="${escHtml(item.name)}"></div>
-      <div class="form-group"><label class="form-label">Logo (leave blank to keep current)</label>
-        <input type="file" accept="image/*" id="edit-${type}-${i}-logo" style="font-size:0.78rem;color:var(--muted)"></div>`;
   }
   if (type === 'visual') {
     return `
@@ -2011,7 +1923,7 @@ function saveEdit(type, i) {
   const applyAndSave = () => {
     saveState();
     renderAdminList(type);
-    const renders = { companies: renderCompanies, works: () => renderWorks(), visual: renderVisuals, blog: renderBlogs, testimonials: renderTestimonials };
+    const renders = { works: () => renderWorks(), visual: renderVisuals, blog: renderBlogs, testimonials: renderTestimonials };
     renders[type]();
     notify('Changes saved ✓');
   };
@@ -2030,10 +1942,6 @@ function saveEdit(type, i) {
     w.cat   = get(`edit-works-${i}-cat`) || w.cat;
     w.url   = get(`edit-works-${i}-url`) || w.url;
     withOptionalFile(`edit-works-${i}-thumb`, w.thumb, b64 => { w.thumb = b64; });
-  } else if (type === 'companies') {
-    const c = state.companies[i];
-    c.name = get(`edit-companies-${i}-name`) || c.name;
-    withOptionalFile(`edit-companies-${i}-logo`, c.logo, b64 => { c.logo = b64; });
   } else if (type === 'visual') {
     const v = state.visuals[i];
     v.title = get(`edit-visual-${i}-title`);
@@ -2054,11 +1962,11 @@ function saveEdit(type, i) {
 }
 
 function deleteItem(type, i) {
-  const arr = { companies: 'companies', works: 'works', visual: 'visuals', blog: 'blogs', testimonials: 'testimonials' };
+  const arr = { works: 'works', visual: 'visuals', blog: 'blogs', testimonials: 'testimonials' };
   state[arr[type]].splice(i, 1);
   saveState();
   renderAdminList(type);
-  const renders = { companies: renderCompanies, works: () => renderWorks(), visual: renderVisuals, blog: renderBlogs, testimonials: renderTestimonials };
+  const renders = { works: () => renderWorks(), visual: renderVisuals, blog: renderBlogs, testimonials: renderTestimonials };
   renders[type]();
   notify('Item removed');
 }
