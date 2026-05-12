@@ -1399,13 +1399,20 @@ function addCompany() {
   const name = document.getElementById('aCompanyName').value.trim();
   if (!name) return;
   const logoInput = document.getElementById('aCompanyLogo');
-  const logo = logoInput.files[0] ? URL.createObjectURL(logoInput.files[0]) : null;
-  state.companies.push({ name, logo });
-  renderCompanies();
-  renderAdminList('companies');
-  document.getElementById('aCompanyName').value = '';
-  document.getElementById('companyLogoPreview').style.display = 'none';
-  notify('Company added ✓');
+  if (logoInput.files[0]) {
+    readFileAsDataURL(logoInput.files[0]).then(logo => {
+      state.companies.push({ name, logo });
+      saveState(); renderCompanies(); renderAdminList('companies');
+      document.getElementById('aCompanyName').value = '';
+      document.getElementById('companyLogoPreview').style.display = 'none';
+      notify('Company added ✓');
+    });
+  } else {
+    state.companies.push({ name, logo: null });
+    saveState(); renderCompanies(); renderAdminList('companies');
+    document.getElementById('aCompanyName').value = '';
+    notify('Company added ✓');
+  }
 }
 
 function renderCompanies() {
@@ -1423,25 +1430,29 @@ function renderCompanies() {
 function addWork() {
   const title = document.getElementById('aWorkTitle').value.trim();
   if (!title) return;
-  const thumbInput = document.getElementById('aWorkThumb');
-  const thumb = thumbInput.files[0] ? URL.createObjectURL(thumbInput.files[0]) : null;
-  state.works.push({
+  const data = {
     title,
     desc: document.getElementById('aWorkDesc').value,
     cat: document.getElementById('aWorkCat').value,
     tags: [...state.workTags],
     url: document.getElementById('aWorkUrl').value.trim() || '#',
-    thumb
-  });
-  state.workTags = [];
-  document.getElementById('aWorkTags').innerHTML = '';
-  document.getElementById('aWorkTitle').value = '';
-  document.getElementById('aWorkDesc').value = '';
-  document.getElementById('aWorkUrl').value = '';
-  document.getElementById('workThumbPreview').style.display = 'none';
-  renderWorks();
-  renderAdminList('works');
-  notify('Work added ✓');
+    thumb: null
+  };
+  const thumbInput = document.getElementById('aWorkThumb');
+  const finish = () => {
+    state.works.push(data);
+    state.workTags = [];
+    document.getElementById('aWorkTags').innerHTML = '';
+    document.getElementById('aWorkTitle').value = '';
+    document.getElementById('aWorkDesc').value = '';
+    document.getElementById('aWorkUrl').value = '';
+    document.getElementById('workThumbPreview').style.display = 'none';
+    saveState(); renderWorks(); renderAdminList('works');
+    notify('Work added ✓');
+  };
+  if (thumbInput.files[0]) {
+    readFileAsDataURL(thumbInput.files[0]).then(b64 => { data.thumb = b64; finish(); });
+  } else { finish(); }
 }
 
 function renderWorks(filter = 'all') {
@@ -1503,13 +1514,13 @@ function addVisual() {
   const title = document.getElementById('aVisualTitle').value.trim();
   const imgInput = document.getElementById('aVisualImg');
   if (!imgInput.files[0]) return;
-  const src = URL.createObjectURL(imgInput.files[0]);
-  state.visuals.push({ title, src });
-  document.getElementById('aVisualTitle').value = '';
-  document.getElementById('visualImgPreview').style.display = 'none';
-  renderVisuals();
-  renderAdminList('visual');
-  notify('Visual added ✓');
+  readFileAsDataURL(imgInput.files[0]).then(src => {
+    state.visuals.push({ title, src });
+    document.getElementById('aVisualTitle').value = '';
+    document.getElementById('visualImgPreview').style.display = 'none';
+    saveState(); renderVisuals(); renderAdminList('visual');
+    notify('Visual added ✓');
+  });
 }
 
 function renderVisuals() {
@@ -1540,24 +1551,28 @@ scrollWrap.addEventListener('mousemove', e => { if (!isDragging) return; e.preve
 function addBlog() {
   const title = document.getElementById('aBlogTitle').value.trim();
   if (!title) return;
-  const coverInput = document.getElementById('aBlogCover');
-  const cover = coverInput.files[0] ? URL.createObjectURL(coverInput.files[0]) : null;
   const dateVal = document.getElementById('aBlogDate').value;
-  state.blogs.push({
+  const data = {
     title,
     cat: document.getElementById('aBlogCat').value || 'Article',
     date: dateVal ? new Date(dateVal).toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'}) : '',
     url: document.getElementById('aBlogUrl').value || '#',
-    cover
-  });
-  document.getElementById('aBlogTitle').value = '';
-  document.getElementById('aBlogCat').value = '';
-  document.getElementById('aBlogDate').value = '';
-  document.getElementById('aBlogUrl').value = '';
-  document.getElementById('blogCoverPreview').style.display = 'none';
-  renderBlogs();
-  renderAdminList('blog');
-  notify('Blog post added ✓');
+    cover: null
+  };
+  const coverInput = document.getElementById('aBlogCover');
+  const finish = () => {
+    state.blogs.push(data);
+    document.getElementById('aBlogTitle').value = '';
+    document.getElementById('aBlogCat').value = '';
+    document.getElementById('aBlogDate').value = '';
+    document.getElementById('aBlogUrl').value = '';
+    document.getElementById('blogCoverPreview').style.display = 'none';
+    saveState(); renderBlogs(); renderAdminList('blog');
+    notify('Blog post added ✓');
+  };
+  if (coverInput.files[0]) {
+    readFileAsDataURL(coverInput.files[0]).then(b64 => { data.cover = b64; finish(); });
+  } else { finish(); }
 }
 
 function renderBlogs() {
@@ -1588,21 +1603,24 @@ function addTestimonial() {
   const quote = document.getElementById('aTestiQuote').value.trim();
   const name = document.getElementById('aTestiName').value.trim();
   if (!quote || !name) return;
-  const avatarInput = document.getElementById('aTestiAvatar');
-  const avatar = avatarInput.files[0] ? URL.createObjectURL(avatarInput.files[0]) : null;
-  state.testimonials.push({
-    quote,
-    name,
+  const data = {
+    quote, name,
     company: document.getElementById('aTestiCompany').value,
-    avatar
-  });
-  document.getElementById('aTestiQuote').value = '';
-  document.getElementById('aTestiName').value = '';
-  document.getElementById('aTestiCompany').value = '';
-  document.getElementById('testiAvatarPreview').style.display = 'none';
-  renderTestimonials();
-  renderAdminList('testimonials');
-  notify('Testimonial added ✓');
+    avatar: null
+  };
+  const avatarInput = document.getElementById('aTestiAvatar');
+  const finish = () => {
+    state.testimonials.push(data);
+    document.getElementById('aTestiQuote').value = '';
+    document.getElementById('aTestiName').value = '';
+    document.getElementById('aTestiCompany').value = '';
+    document.getElementById('testiAvatarPreview').style.display = 'none';
+    saveState(); renderTestimonials(); renderAdminList('testimonials');
+    notify('Testimonial added ✓');
+  };
+  if (avatarInput.files[0]) {
+    readFileAsDataURL(avatarInput.files[0]).then(b64 => { data.avatar = b64; finish(); });
+  } else { finish(); }
 }
 
 function renderTestimonials() {
@@ -1656,6 +1674,7 @@ function renderAdminList(type) {
 function deleteItem(type, i) {
   const arr = { companies: 'companies', works: 'works', visual: 'visuals', blog: 'blogs', testimonials: 'testimonials' };
   state[arr[type]].splice(i, 1);
+  saveState();
   renderAdminList(type);
   const renders = { companies: renderCompanies, works: () => renderWorks(), visual: renderVisuals, blog: renderBlogs, testimonials: renderTestimonials };
   renders[type]();
