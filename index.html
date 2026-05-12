@@ -1691,8 +1691,10 @@ function renderVisuals() {
     </div>
   `).join('');
 
-  // Update lightbox images to full set
-  state.lightboxImages = state.visuals.map(v => v.src);
+  // Lightbox uses full-res PNG — swap .webp → .png for original quality
+  state.lightboxImages = state.visuals.map(v =>
+    v.src.startsWith('/images/') ? v.src.replace('.webp', '.png') : v.src
+  );
 
   // Show/hide controls
   if (totalPages > 1) {
