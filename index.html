@@ -1314,8 +1314,15 @@ function loadState() {
     const saved = localStorage.getItem('ks_portfolio_state');
     if (saved) {
       const parsed = JSON.parse(saved);
-      return { ...DEFAULT_STATE, ...parsed,
+      // For each array section: if localStorage has data use it, otherwise fall back to DEFAULT_STATE
+      // This means old empty localStorage won't wipe newly baked-in data
+      return {
+        ...DEFAULT_STATE,
         hero: { ...DEFAULT_STATE.hero, ...(parsed.hero || {}) },
+        works:        (parsed.works        && parsed.works.length)        ? parsed.works        : DEFAULT_STATE.works,
+        visuals:      (parsed.visuals      && parsed.visuals.length)      ? parsed.visuals      : DEFAULT_STATE.visuals,
+        blogs:        (parsed.blogs        && parsed.blogs.length)        ? parsed.blogs        : DEFAULT_STATE.blogs,
+        testimonials: (parsed.testimonials && parsed.testimonials.length) ? parsed.testimonials : DEFAULT_STATE.testimonials,
         workTags: [], currentCarousel: 0, lightboxImages: [], lightboxIndex: 0
       };
     }
