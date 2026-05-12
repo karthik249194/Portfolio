@@ -679,9 +679,14 @@
   }
   .admin-item {
     background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 11px 14px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    border-radius: var(--radius-sm);
     transition: border-color 0.2s;
+    overflow: hidden;
+  }
+  .admin-item.editing { border-color: rgba(168,85,247,0.5); }
+  .admin-item-row {
+    padding: 11px 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
   .admin-item:hover { border-color: rgba(168,85,247,0.25); }
   .admin-item-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
@@ -691,12 +696,57 @@
   }
   .admin-item-title { font-size: 0.875rem; color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .admin-item-sub { font-size: 0.75rem; color: var(--muted); }
+  .admin-item-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   .admin-item-del {
     background: none; border: none; color: var(--muted);
-    cursor: pointer; padding: 4px; border-radius: 4px;
-    transition: color 0.15s, background 0.15s; flex-shrink: 0; font-size: 0.875rem;
+    cursor: pointer; padding: 4px 6px; border-radius: 4px;
+    transition: color 0.15s, background 0.15s; font-size: 0.875rem;
   }
   .admin-item-del:hover { color: #f87171; background: rgba(248,113,113,0.1); }
+  .admin-item-edit {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; padding: 4px 6px; border-radius: 4px;
+    transition: color 0.15s, background 0.15s; font-size: 0.8rem;
+  }
+  .admin-item-edit:hover { color: var(--accent); background: rgba(168,85,247,0.1); }
+  .admin-item-edit.active { color: var(--accent); }
+
+  /* Inline edit drawer */
+  .admin-item-drawer {
+    display: none; padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+    background: rgba(168,85,247,0.03);
+    flex-direction: column; gap: 10px;
+  }
+  .admin-item-drawer.open { display: flex; }
+  .admin-item-drawer .form-input,
+  .admin-item-drawer .form-textarea,
+  .admin-item-drawer .form-select {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-family: 'Inter', sans-serif; font-size: 0.8125rem;
+    padding: 8px 12px; width: 100%; outline: none;
+    transition: border-color 0.2s;
+  }
+  .admin-item-drawer .form-input:focus,
+  .admin-item-drawer .form-textarea:focus { border-color: rgba(168,85,247,0.6); }
+  .admin-item-drawer .form-label {
+    font-size: 0.62rem; font-weight: 700; color: var(--accent);
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px;
+  }
+  .admin-item-drawer .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .admin-item-drawer-header {
+    padding: 10px 0 4px;
+    font-size: 0.7rem; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.8px; text-transform: uppercase;
+  }
+  .btn-save-edit {
+    padding: 9px 16px; background: var(--grad); border: none;
+    border-radius: var(--radius-sm); color: #fff; font-weight: 700;
+    font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s; align-self: flex-start;
+  }
+  .btn-save-edit:hover { opacity: 0.88; }
 
   .tags-input-wrap { display: flex; gap: 8px; }
   .tags-input-wrap .form-input { flex: 1; }
@@ -1648,27 +1698,171 @@ function renderTestimonials() {
 // ── ADMIN LISTS ──────────────────────────────────────────
 function renderAdminList(type) {
   const maps = {
-    companies: { listId: 'adminCompaniesList', items: state.companies, label: c => c.name, sub: () => '', thumb: c => c.logo },
-    works: { listId: 'adminWorksList', items: state.works, label: w => w.title, sub: w => w.cat, thumb: w => w.thumb },
-    visual: { listId: 'adminVisualList', items: state.visuals, label: v => v.title, sub: () => 'Visual', thumb: v => v.src },
-    blog: { listId: 'adminBlogList', items: state.blogs, label: b => b.title, sub: b => b.cat, thumb: b => b.cover },
-    testimonials: { listId: 'adminTestiList', items: state.testimonials, label: t => t.name, sub: t => t.company, thumb: t => t.avatar },
+    companies:    { listId: 'adminCompaniesList',  items: state.companies,    label: c => c.name,  sub: () => '',       thumb: c => c.logo },
+    works:        { listId: 'adminWorksList',       items: state.works,        label: w => w.title, sub: w => w.cat,     thumb: w => w.thumb },
+    visual:       { listId: 'adminVisualList',      items: state.visuals,      label: v => v.title, sub: () => 'Visual', thumb: v => v.src },
+    blog:         { listId: 'adminBlogList',        items: state.blogs,        label: b => b.title, sub: b => b.cat,     thumb: b => b.cover },
+    testimonials: { listId: 'adminTestiList',       items: state.testimonials, label: t => t.name,  sub: t => t.company, thumb: t => t.avatar },
   };
   const m = maps[type];
   const list = document.getElementById(m.listId);
   if (!m.items.length) { list.innerHTML = ''; return; }
-  list.innerHTML = m.items.map((item, i) => `
-    <div class="admin-item">
-      <div class="admin-item-info">
-        ${m.thumb(item) ? `<img class="admin-item-thumb" src="${m.thumb(item)}" alt="">` : `<div class="admin-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--muted)">${m.label(item).charAt(0)}</div>`}
-        <div>
-          <div class="admin-item-title">${m.label(item)}</div>
-          <div class="admin-item-sub">${m.sub(item)}</div>
+
+  list.innerHTML = m.items.map((item, i) => {
+    const thumbHtml = m.thumb(item)
+      ? `<img class="admin-item-thumb" src="${m.thumb(item)}" alt="">`
+      : `<div class="admin-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--muted)">${m.label(item).charAt(0)}</div>`;
+
+    const drawerHtml = buildEditDrawer(type, item, i);
+
+    return `
+    <div class="admin-item" id="admin-item-${type}-${i}">
+      <div class="admin-item-row">
+        <div class="admin-item-info">
+          ${thumbHtml}
+          <div>
+            <div class="admin-item-title">${m.label(item)}</div>
+            <div class="admin-item-sub">${m.sub(item)}</div>
+          </div>
+        </div>
+        <div class="admin-item-actions">
+          <button class="admin-item-edit" title="Edit" onclick="toggleEditDrawer('${type}', ${i})">✎</button>
+          <button class="admin-item-del" onclick="deleteItem('${type}', ${i})">✕</button>
         </div>
       </div>
-      <button class="admin-item-del" onclick="deleteItem('${type}', ${i})">✕</button>
-    </div>
-  `).join('');
+      <div class="admin-item-drawer" id="drawer-${type}-${i}">
+        <div class="admin-item-drawer-header">Edit ${type === 'visual' ? 'visual' : type.replace(/s$/, '')}</div>
+        ${drawerHtml}
+        <button class="btn-save-edit" onclick="saveEdit('${type}', ${i})">Save changes</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildEditDrawer(type, item, i) {
+  if (type === 'works') {
+    return `
+      <div class="form-group"><label class="form-label">Title</label>
+        <input class="form-input" id="edit-${type}-${i}-title" value="${escHtml(item.title)}"></div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="edit-${type}-${i}-desc" rows="2">${escHtml(item.desc||'')}</textarea></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-select" id="edit-${type}-${i}-cat">
+          <option ${item.cat==='Case Study'?'selected':''}>Case Study</option>
+          <option ${item.cat==='AI Works'?'selected':''}>AI Works</option>
+          <option ${item.cat==='Other'?'selected':''}>Other</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Target URL</label>
+        <input class="form-input" id="edit-${type}-${i}-url" value="${escHtml(item.url||'')}"></div>
+      <div class="form-group"><label class="form-label">Thumbnail (leave blank to keep current)</label>
+        <input type="file" accept="image/*" id="edit-${type}-${i}-thumb" style="font-size:0.78rem;color:var(--muted)"></div>`;
+  }
+  if (type === 'companies') {
+    return `
+      <div class="form-group"><label class="form-label">Name</label>
+        <input class="form-input" id="edit-${type}-${i}-name" value="${escHtml(item.name)}"></div>
+      <div class="form-group"><label class="form-label">Logo (leave blank to keep current)</label>
+        <input type="file" accept="image/*" id="edit-${type}-${i}-logo" style="font-size:0.78rem;color:var(--muted)"></div>`;
+  }
+  if (type === 'visual') {
+    return `
+      <div class="form-group"><label class="form-label">Title</label>
+        <input class="form-input" id="edit-${type}-${i}-title" value="${escHtml(item.title||'')}"></div>
+      <div class="form-group"><label class="form-label">Image (leave blank to keep current)</label>
+        <input type="file" accept="image/*" id="edit-${type}-${i}-src" style="font-size:0.78rem;color:var(--muted)"></div>`;
+  }
+  if (type === 'blog') {
+    return `
+      <div class="form-group"><label class="form-label">Title</label>
+        <input class="form-input" id="edit-${type}-${i}-title" value="${escHtml(item.title)}"></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <input class="form-input" id="edit-${type}-${i}-cat" value="${escHtml(item.cat||'')}"></div>
+      <div class="form-group"><label class="form-label">URL</label>
+        <input class="form-input" id="edit-${type}-${i}-url" value="${escHtml(item.url||'')}"></div>
+      <div class="form-group"><label class="form-label">Cover image (leave blank to keep current)</label>
+        <input type="file" accept="image/*" id="edit-${type}-${i}-cover" style="font-size:0.78rem;color:var(--muted)"></div>`;
+  }
+  if (type === 'testimonials') {
+    return `
+      <div class="form-group"><label class="form-label">Quote</label>
+        <textarea class="form-textarea" id="edit-${type}-${i}-quote" rows="3">${escHtml(item.quote)}</textarea></div>
+      <div class="form-group"><label class="form-label">Name</label>
+        <input class="form-input" id="edit-${type}-${i}-name" value="${escHtml(item.name)}"></div>
+      <div class="form-group"><label class="form-label">Company</label>
+        <input class="form-input" id="edit-${type}-${i}-company" value="${escHtml(item.company||'')}"></div>
+      <div class="form-group"><label class="form-label">Avatar (leave blank to keep current)</label>
+        <input type="file" accept="image/*" id="edit-${type}-${i}-avatar" style="font-size:0.78rem;color:var(--muted)"></div>`;
+  }
+  return '';
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toggleEditDrawer(type, i) {
+  const drawer = document.getElementById(`drawer-${type}-${i}`);
+  const item = document.getElementById(`admin-item-${type}-${i}`);
+  const btn = item.querySelector('.admin-item-edit');
+  const isOpen = drawer.classList.contains('open');
+  // Close all other drawers first
+  document.querySelectorAll('.admin-item-drawer.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.admin-item-edit.active').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.admin-item.editing').forEach(el => el.classList.remove('editing'));
+  if (!isOpen) {
+    drawer.classList.add('open');
+    btn.classList.add('active');
+    item.classList.add('editing');
+  }
+}
+
+function saveEdit(type, i) {
+  const get = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const getFile = id => { const el = document.getElementById(id); return el && el.files[0] ? el.files[0] : null; };
+
+  const applyAndSave = () => {
+    saveState();
+    renderAdminList(type);
+    const renders = { companies: renderCompanies, works: () => renderWorks(), visual: renderVisuals, blog: renderBlogs, testimonials: renderTestimonials };
+    renders[type]();
+    notify('Changes saved ✓');
+  };
+
+  const withOptionalFile = (fileId, currentVal, cb) => {
+    const file = getFile(fileId);
+    if (file) {
+      readFileAsDataURL(file).then(b64 => { cb(b64); applyAndSave(); });
+    } else { cb(currentVal); applyAndSave(); }
+  };
+
+  if (type === 'works') {
+    const w = state.works[i];
+    w.title = get(`edit-works-${i}-title`) || w.title;
+    w.desc  = get(`edit-works-${i}-desc`);
+    w.cat   = get(`edit-works-${i}-cat`) || w.cat;
+    w.url   = get(`edit-works-${i}-url`) || w.url;
+    withOptionalFile(`edit-works-${i}-thumb`, w.thumb, b64 => { w.thumb = b64; });
+  } else if (type === 'companies') {
+    const c = state.companies[i];
+    c.name = get(`edit-companies-${i}-name`) || c.name;
+    withOptionalFile(`edit-companies-${i}-logo`, c.logo, b64 => { c.logo = b64; });
+  } else if (type === 'visual') {
+    const v = state.visuals[i];
+    v.title = get(`edit-visual-${i}-title`);
+    withOptionalFile(`edit-visual-${i}-src`, v.src, b64 => { v.src = b64; });
+  } else if (type === 'blog') {
+    const b = state.blogs[i];
+    b.title = get(`edit-blog-${i}-title`) || b.title;
+    b.cat   = get(`edit-blog-${i}-cat`) || b.cat;
+    b.url   = get(`edit-blog-${i}-url`) || b.url;
+    withOptionalFile(`edit-blog-${i}-cover`, b.cover, b64 => { b.cover = b64; });
+  } else if (type === 'testimonials') {
+    const t = state.testimonials[i];
+    t.quote   = get(`edit-testimonials-${i}-quote`) || t.quote;
+    t.name    = get(`edit-testimonials-${i}-name`) || t.name;
+    t.company = get(`edit-testimonials-${i}-company`);
+    withOptionalFile(`edit-testimonials-${i}-avatar`, t.avatar, b64 => { t.avatar = b64; });
+  }
 }
 
 function deleteItem(type, i) {
