@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Karthikeyan Sridhar — Portfolio</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFmklEQVR4nO2beWwUZRjGf7M73XYvCu1CW3rRLSokbakKJBSKoHgRDFCFhL+JiUaDJuLFYWKMhkvFIxoSopGoIRAIkoAgp9VwaChSiWBpS6BUe2y3lJZut3uMf2y33ensttvZNaSdfZKvSWe+7573efb93u+Y+YQNZW2MANJIKt9DCNFWFJGG5TRaSIci1OchxRCFofmNRvKDITGECGIEjmOBeCiCfBRCiIKyC4w18qFQRMPgCBjL5IOQiTBcDhjzCBVAS0r0R0FwGNQS+SAkQEh0AW3++AMQhSimgmMYUrh5gKagu9cO3GskkqC2U0AiAhICJOYBWh8GExGg+RygVoCnNmRSsjRVdm3vmltcP3tXUTd7hpEVn+ZgMMnnXb/ucHBmp3xX2piqp/iZVArKzNjsBlKseiSg544Pd6efLocXR52b1lo3DVUu2ht6VfkfRAzzgHDtJAbby33IxLPbleQrv2jl3Fdy8oXzLCx+Nwtjql5h2WITsdggvcBA/iwTAFV72jm+pVml/wGojoBw26wCEGovb6aJiu05JKUMIv9ZC+e/aZPZyJiewrKt2eiTot7SVzxPDeKcBCWC9vJnm6n4OA8xWU7o9PZmfv9W+TKm/MWJMvIel5/TnzRT90sX3e1eDEYd6fZkCsosFC0Zj2WiKHueWohCHHuAIAXKlDkWln2Ui2iQkz/1YRMXvncqokefJJA3yyy7dm6ng0t72/v/73H7aKzqprGqmzNftlK0dDymND2q/e9DDKNA+Bxgn2tm6bZc9IPIn9z6Lxd3K8kDmNNEReh3NvVGDG/JJ/HnficwgndgERDXLlBYbqV4+QQ5GQlObP6HP/Y6I7bzefyKaw+uSufGb110O71x8y8c4poES1emyS9IcPyDRqr3h//lg3A5PXS1eLBMSuq/llVk5PlDD3DzfBeNF+/SfNVF818u3J0+Vf5GQpyHQfntn967xeUDkX/5UFzc7aB8TZbcOYOAvdyKvdwaMOmH1hoXNcc7qN7XRk9H7GLoBCTUlOEgSYE/0dq7sKuFK4fah7Qp6GDSNCPzXs5k9cFpFM63qvI9tKgWYDgRBB088U4uRcvSorPllzi68QYHX63n1oWuYQMs2apnyZYppNuTYxIgrkmws6kXa6YhRAV4fGMugk7i8v7oPsSor+ygvrID4wSRnIctZBabmVxiJqPIhE4vzyR6g8CMlTZObWpQ7XNcl8OnNzVQVGGjYH7IGkGARevzEIDL+xxR2+pxeqg91k7tsUC3SEkVmfvKZIqW22T1Jk0zEgsH3cBsSk2Rw+fxc2htHdcrO+Q3BHhsfR7Fz9lUP6unw8Op92/idcuHTJ0oxOB/DDkgHATA7/FzeG0t9T/fVtx8dF0eJStsYe1V7LiPKWVWBCHyM5NShD7CA7jb0htjDlAbPmHbBVaDvl6Jw6/VsnjbVOwLxstEWPh2PgJQvadF1nJyqZXc2eO40+im5oiTxqpOHDXd9Nz2IqbosN1vYs5L2Yo8cPNsRwRfokOcV4MD0SF5JX5ce42nt07FvnCCrOGCdfkIOqjerVzKjstOZubqLGauzlLcG4w7jW6uHGiNaliOBF1gSTnyEgmhdSSvxJHXa6k7oRzfH3krnxmrMvrrelwjm9S01br44YWr+Nx+Vf4Hy/+wJyi35/dKHH3jGk9unkrhIvlUef6bgUi49F0TXy+qIqvUSlaplYnTzaTmJGPOMJBk0qPTg6fbT1dLL46/u6k/6aT+ZDt+X+y+C5+XnNX0pmBiVzjWLaXRjoQAibfDmo8ArQug+ZejiS6gdQESEaBt/ogCUnBLRYtIfCydSIJ98wAtdoO+AxMDvLUkQuLMUBCDp8JaiIIhj80FK4xVEcIcnAzPNVhxrAgx4qOzoQ1HuwjDHJ4efjkcamC0iBH1p0P/Aca8iuKZZhfcAAAAAElFTkSuQmCC">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -130,6 +131,9 @@
     min-height: 100vh;
     position: relative;
   }
+  @media (max-width: 1024px) {
+    #hero { min-height: unset; }
+  }
 
   .hero-eyebrow {
     display: inline-flex; align-items: center; gap: 8px;
@@ -220,7 +224,7 @@
     border-radius: 32px;
     overflow: hidden;
     border: 2px solid rgba(168,85,247,0.18);
-    background: #f0eef8;
+    background: transparent;
     box-shadow: 0 24px 60px rgba(0,0,0,0.5);
     transform: rotate(5deg) translateX(60px);
     z-index: 1;
@@ -228,10 +232,9 @@
   }
   .phone-bg img {
     width: 100%; height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: top;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
+    display: block;
   }
 
   /* Main front phone */
@@ -242,7 +245,7 @@
     border-radius: 36px;
     overflow: hidden;
     border: 2px solid rgba(168,85,247,0.45);
-    background: #f0eef8;
+    background: transparent;
     box-shadow:
       0 0 0 1px rgba(168,85,247,0.12),
       0 40px 100px rgba(0,0,0,0.65),
@@ -254,23 +257,23 @@
   .phone-slide {
     position: absolute; inset: 0; opacity: 0;
     transition: opacity 0.5s ease;
+    background: transparent;
   }
   .phone-slide.active { opacity: 1; }
   .phone-slide img {
     width: 100%; height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: top;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
+    display: block;
   }
 
   .phone-placeholder {
     width: 100%; height: 100%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 12px; color: #888; font-size: 0.8125rem; padding: 20px; text-align: center;
-    background: #f0eef8;
+    gap: 12px; color: var(--muted); font-size: 0.8125rem; padding: 20px; text-align: center;
+    background: var(--bg3);
   }
-  .phone-placeholder svg { opacity: 0.25; stroke: #555; }
+  .phone-placeholder svg { opacity: 0.25; stroke: var(--muted); }
 
   /* Nav arrows */
   .phone-nav {
@@ -729,8 +732,14 @@
   /* ── RESPONSIVE ── */
   @media (max-width: 1024px) {
     :root { --px: 60px; }
-    #hero { grid-template-columns: 1fr; }
-    .hero-visual { height: 420px; }
+    #hero {
+      grid-template-columns: 1fr;
+      padding-bottom: 60px;
+    }
+    .hero-visual {
+      height: 480px;
+      margin-top: 20px;
+    }
     .phone-bg { display: none; }
     .phone-nav-prev { left: -10px; }
     .phone-nav-next { right: -10px; }
@@ -739,7 +748,22 @@
     :root { --px: 24px; --section-gap: 80px; }
     .nav-links, .nav-resume { display: none; }
     .hamburger { display: flex; }
-    #hero { padding-top: 120px; padding-bottom: var(--section-gap); }
+    #hero {
+      padding-top: 100px;
+      padding-bottom: 60px;
+      gap: 32px;
+    }
+    .hero-visual {
+      height: 420px;
+      width: 100%;
+    }
+    .phone-front {
+      width: 220px;
+      height: 440px;
+      border-radius: 28px;
+    }
+    .phone-nav-prev { left: 0; }
+    .phone-nav-next { right: 0; }
     .hero-title { font-size: 2.5rem; }
     .works-grid, .blog-grid, .testimonials-grid { grid-template-columns: 1fr; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
