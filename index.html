@@ -1041,6 +1041,7 @@
       <button class="admin-tab" data-tab="visual">Visual</button>
       <button class="admin-tab" data-tab="blog">Blog</button>
       <button class="admin-tab" data-tab="testimonials">Testimonials</button>
+      <button class="admin-tab" data-tab="data">💾 Data</button>
     </div>
     <div class="admin-body">
 
@@ -1250,6 +1251,45 @@
         </div>
       </div>
 
+      <!-- DATA TAB -->
+      <div class="admin-section" id="tab-data">
+        <div class="admin-form">
+
+          <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.2);border-radius:var(--radius-sm);padding:14px 16px;font-size:0.8rem;color:var(--muted);line-height:1.6">
+            💡 <strong style="color:var(--text2)">Before deploying a new file from Claude</strong> — export your data, deploy, then import it back. Takes 10 seconds and you never lose anything.
+          </div>
+
+          <div class="admin-divider"></div>
+
+          <div class="form-group">
+            <label class="form-label">Export Data</label>
+            <p style="font-size:0.75rem;color:var(--muted);margin-bottom:10px">Downloads a <code style="font-size:0.72rem;background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:3px">.json</code> backup file of all your admin data — works, visuals, blogs, hero, everything.</p>
+            <button class="btn-add" onclick="exportData()" style="width:100%;justify-content:center;display:flex;align-items:center;gap:8px">⬇ Export Backup</button>
+          </div>
+
+          <div class="admin-divider"></div>
+
+          <div class="form-group">
+            <label class="form-label">Import Data</label>
+            <p style="font-size:0.75rem;color:var(--muted);margin-bottom:10px">Select a previously exported <code style="font-size:0.72rem;background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:3px">.json</code> backup to restore all your data. This replaces current data.</p>
+            <label class="upload-zone" style="cursor:pointer">
+              <input type="file" accept=".json" onchange="importData(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%">
+              <span class="upload-icon">↑</span>
+              <span class="upload-text">Select backup .json file</span>
+            </label>
+          </div>
+
+          <div class="admin-divider"></div>
+
+          <div class="form-group">
+            <label class="form-label" style="color:#f87171">Danger Zone</label>
+            <p style="font-size:0.75rem;color:var(--muted);margin-bottom:10px">Clear all admin data and reset to defaults. Cannot be undone — export first.</p>
+            <button onclick="clearAllData()" style="width:100%;padding:10px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:var(--radius-sm);color:#f87171;font-weight:600;font-size:0.8125rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.2s" onmouseover="this.style.background='rgba(248,113,113,0.15)'" onmouseout="this.style.background='rgba(248,113,113,0.08)'">🗑 Clear All Data</button>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1312,6 +1352,67 @@ function saveState() {
     };
     localStorage.setItem('ks_portfolio_state', JSON.stringify(toSave));
   } catch(e) { /* quota exceeded — skip */ }
+}
+
+// ── DATA BACKUP / RESTORE ──────────────────────────────
+function exportData() {
+  const toSave = {
+    hero: state.hero,
+    companies: state.companies,
+    works: state.works,
+    visuals: state.visuals,
+    blogs: state.blogs,
+    testimonials: state.testimonials,
+    _exported: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(toSave, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ks-portfolio-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  notify('Backup downloaded ✓');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      // Merge into state
+      if (parsed.hero)         Object.assign(state.hero, parsed.hero);
+      if (parsed.companies)    state.companies = parsed.companies;
+      if (parsed.works)        state.works = parsed.works;
+      if (parsed.visuals)      state.visuals = parsed.visuals;
+      if (parsed.blogs)        state.blogs = parsed.blogs;
+      if (parsed.testimonials) state.testimonials = parsed.testimonials;
+      saveState();
+      // Re-render everything
+      renderHero();
+      renderCarousel();
+      renderCompanies();
+      renderWorks();
+      renderVisuals();
+      renderBlogs();
+      renderTestimonials();
+      // Refresh all admin lists
+      ['companies','works','visual','blog','testimonials'].forEach(renderAdminList);
+      notify('Data restored ✓');
+    } catch(err) {
+      notify('Invalid backup file ✗');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = ''; // reset so same file can be re-selected
+}
+
+function clearAllData() {
+  if (!confirm('Clear ALL admin data and reset to defaults? This cannot be undone. Export first if needed.')) return;
+  localStorage.removeItem('ks_portfolio_state');
+  location.reload();
 }
 
 // ── FILE → BASE64 HELPER ────────────────────────────
