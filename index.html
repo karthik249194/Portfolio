@@ -297,7 +297,42 @@
   }
   .carousel-dot.active { background: var(--accent); transform: scale(1.3); }
 
-  /* ── SECTION HEADERS ── */
+  /* ── COMPANIES STRIP ── */
+  .companies-section {
+    padding: 48px 0 60px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    margin-bottom: var(--section-gap);
+  }
+  .companies-label {
+    text-align: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--muted);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .companies-track-wrap {
+    overflow: hidden;
+    position: relative;
+  }
+  .companies-track {
+    display: flex; align-items: center; gap: 64px;
+    width: max-content;
+    animation: scroll-logos 28s linear infinite;
+  }
+  .companies-track:hover { animation-play-state: paused; }
+  @keyframes scroll-logos {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .company-logo {
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.55; transition: opacity 0.2s;
+    flex-shrink: 0;
+  }
+  .company-logo:hover { opacity: 1; }
+  .company-logo svg { width: auto; height: 32px; fill: #ffffff; }
   .section-header {
     display: flex; align-items: flex-end; justify-content: space-between;
     margin-bottom: 48px;
@@ -939,6 +974,77 @@
 
 
 
+<!-- COMPANIES -->
+<div class="companies-section">
+  <div class="companies-label">Companies I've worked with</div>
+  <div class="companies-track-wrap">
+    <div class="companies-track">
+
+      <!-- AthenaHealth -->
+      <div class="company-logo" title="AthenaHealth">
+        <svg viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="#ffffff">athenahealth</text>
+        </svg>
+      </div>
+
+      <!-- PayPal -->
+      <div class="company-logo" title="PayPal">
+        <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="#ffffff">PayPal</text>
+        </svg>
+      </div>
+
+      <!-- Altimetrik -->
+      <div class="company-logo" title="Altimetrik">
+        <svg viewBox="0 0 160 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="#ffffff">Altimetrik</text>
+        </svg>
+      </div>
+
+      <!-- Aditya Birla -->
+      <div class="company-logo" title="Aditya Birla Payments Bank">
+        <svg viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="24" font-weight="700" fill="#ffffff">Aditya Birla Payments Bank</text>
+        </svg>
+      </div>
+      <!-- Novartis -->
+      <div class="company-logo" title="Novartis">
+        <svg viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="#ffffff">Novartis</text>
+        </svg>
+      </div>
+
+      <!-- Duplicate set for seamless loop -->
+      <div class="company-logo" title="AthenaHealth">
+        <svg viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="#ffffff">athenahealth</text>
+        </svg>
+      </div>
+      <div class="company-logo" title="PayPal">
+        <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="#ffffff">PayPal</text>
+        </svg>
+      </div>
+      <div class="company-logo" title="Altimetrik">
+        <svg viewBox="0 0 160 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="#ffffff">Altimetrik</text>
+        </svg>
+      </div>
+      <div class="company-logo" title="Aditya Birla Payments Bank">
+        <svg viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="24" font-weight="700" fill="#ffffff">Aditya Birla Payments Bank</text>
+        </svg>
+      </div>
+      <div class="company-logo" title="Novartis">
+        <svg viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="30" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="#ffffff">Novartis</text>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- WORKS -->
 <section id="works">
   <div class="section-header">
@@ -964,8 +1070,8 @@
 <section id="visual">
   <div class="section-header">
     <div>
-      <div class="section-eyebrow">UI Craft</div>
-      <h2 class="section-title">Visual &amp; UI Craft</h2>
+      <div class="section-eyebrow">Visual Design</div>
+      <h2 class="section-title">Visual Design Works</h2>
     </div>
   </div>
   <div class="visual-scroll-wrap" id="visualScrollWrap">
